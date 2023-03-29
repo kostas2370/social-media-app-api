@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'djoser',
     'app1',
+    'posts',
+    'messagesapp'
+
 
 ]
 

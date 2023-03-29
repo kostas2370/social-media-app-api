@@ -27,4 +27,5 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view()),
     path('api/register/', RegisterApi.as_view(), name="register"),
     path('api/', include("app1.urls")),
+    path('api/posts/', include("posts.urls"))
 ]
