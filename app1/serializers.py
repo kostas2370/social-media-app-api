@@ -15,7 +15,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "email", "date_of_birth", "sex", "profile_image")
+        fields = ("username", "email", "date_of_birth", "sex", "profile_image", "is_official")
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
