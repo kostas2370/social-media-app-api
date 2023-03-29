@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'djoser',
     'app1',
     'posts',
-    'messagesapp'
+    'messagesapp',
+    'taggit'
+
 
 
 ]

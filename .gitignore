@@ -1,0 +1,6 @@
+/media/
+/venv/
+/app1/migrations/
+/db.sqlite3
+/posts/migrations/
+/messagesapp/migrations/

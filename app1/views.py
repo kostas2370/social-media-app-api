@@ -83,7 +83,7 @@ def delete_friend(request, friendid) -> JsonResponse:
     user = request.user
     friend = User.objects.get(id=friendid)
     if not user.check_if_friend(friend):
-        return JsonResponse({"Message": "Not in the friendlist"}, status = status.HTTP_404_NOT_FOUND)
+        return JsonResponse({"Message": "Not in the friend list"}, status = status.HTTP_404_NOT_FOUND)
 
     user.friends.remove(friend)
     friend.friends.remove(user)
@@ -96,9 +96,3 @@ def delete_friend(request, friendid) -> JsonResponse:
         to_friend[:1].get().delete()
 
     return JsonResponse({"Message": "Friend deleted successfully"}, status = status.HTTP_204_NO_CONTENT)
-
-
-@api_view(["POST"])
-def add_post(request):
-    data = request.data
-

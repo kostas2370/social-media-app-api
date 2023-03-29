@@ -11,6 +11,7 @@ class User(AbstractUser):
     sex = models.CharField(default = 'O', choices =sex_choices, max_length = 1)
     friends = models.ManyToManyField("User", blank = True)
     is_public = models.BooleanField(default = True)
+    is_official = models.BooleanField(default = False)
 
     REQUIRED_FIELDS = ["email", "date_of_birth"]
 

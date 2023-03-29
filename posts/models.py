@@ -1,14 +1,18 @@
 from django.db import models
 from app1 import tasks
 from app1.models import User
+from taggit.managers import TaggableManager
+
 
 class Post(models.Model):
+
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User, on_delete = models.CASCADE)
-    title = models.CharField(max_length = 100, blank = True)
+    title = models.CharField(max_length = 100, blank = True, null = True)
     text = models.TextField(blank = True)
     release_date = models.DateField(auto_now = True)
     is_public = models.BooleanField(default = False)
+    tags = TaggableManager()
 
     def add_like(self, user: User):
         if Dislikes.objects.filter(post = self, user = user).all().count() >= 1:
@@ -38,16 +42,16 @@ class Post(models.Model):
         return self.dislikes.objects.all().count()
 
     def __str__(self):
-        return id
+        return str(self.id)
 
 
 class PostImage(models.Model):
-    post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "images")
-    image = models.ImageField(upload_to = "post_images", null = False)
+    post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "post_images")
+    image = models.ImageField(upload_to = "post_images", blank = True, null = True)
 
     def save(self, *args, **kwargs):
         super().save()
-        tasks.change_jpg.delay(self.image)
+        tasks.change_jpg.delay(self.image.path)
 
 
 class Comment(models.Model):
@@ -58,7 +62,7 @@ class Comment(models.Model):
     text = models.CharField(max_length = 300, blank = False, null = False)
 
     def __str__(self):
-        return f"{id} : {self.author.username}"
+        return f"{self.id} : {self.author.username}"
 
 
 class Likes(models.Model):

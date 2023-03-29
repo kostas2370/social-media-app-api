@@ -4,29 +4,37 @@ from taggit.serializers import TagListSerializerField
 from app1.serializers import UserSerializer
 
 
+class PostUserSerializer(UserSerializer):
+
+    class Meta(UserSerializer.Meta):
+        fields = ('username', 'id', "is_official", "profile_image")
+
+
 class PostImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PostImage
-        fields = ["post", "image"]
+        fields = ["post", "id", "image"]
+        extra_kwargs = {'post': {'write_only': True}, }
 
 
 class CommentsSerializer(serializers.ModelSerializer):
-    author_name = serializers.CharField(source = "author.username", read_only = True)
+    author = PostUserSerializer()
 
     class Meta:
         model = Comment
-        fields = ["post", "id", "author", "release_date", "text", "author_name"]
+        fields = ["post", "id", "author", "release_date", "text"]
+        extra_kwargs = {'post': {'write_only': True}, }
 
 
 class PostSerializer(serializers.ModelSerializer):
     tags = TagListSerializerField()
     title = serializers.CharField(required = False)
-    author = UserSerializer()
-    images = PostImageSerializer(many = True)
+    author = PostUserSerializer()
+    post_images = PostImageSerializer(many = True)
     upload_image = serializers.ListSerializer(
         child = serializers.ImageField(max_length = 10000000, allow_empty_file = False,
-                                       use_url = False, write_only = True))
+                                       use_url = False, write_only = True), write_only = True)
     comments = CommentsSerializer(many = True)
     likes = serializers.IntegerField(source = "likes.count")
     dislikes = serializers.IntegerField(source = "dislikes.count")
