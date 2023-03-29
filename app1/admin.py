@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Message, FriendRequest
+from .models import User, FriendRequest
 from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
@@ -15,5 +15,4 @@ class UserAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(Message)
 admin.site.register(FriendRequest)

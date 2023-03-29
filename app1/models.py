@@ -28,24 +28,6 @@ class User(AbstractUser):
         return False
 
 
-class Message(models.Model):
-
-    id = models.AutoField(primary_key= True)
-    sender = models.ForeignKey(User, on_delete = models.CASCADE, blank = False, related_name= 'SenderToRec')
-    recipient = models.ForeignKey(User, on_delete = models.CASCADE, blank = False, related_name ='recToSencer')
-    message = models.CharField(max_length = 500, blank = False)
-    image = models.ImageField(upload_to = "message_pics", blank = True, null = True)
-    created = models.DateTimeField(auto_now_add = True)
-    isRead = models.BooleanField(default = False)
-
-    def __str__(self):
-        return f"{self.sender} to {self.recipient} {self.id}"
-
-    def isread(self):
-        self.isRead = True
-        self.save()
-
-
 class FriendRequest(models.Model):
     id = models.AutoField(primary_key=True)
     from_user = models.ForeignKey(User, related_name = 'from_user', on_delete = models.CASCADE)
@@ -60,53 +42,3 @@ class FriendRequest(models.Model):
         return f"{self.id} : {self.from_user.username} to {self.to_user.username}"
 
 
-class Post(models.Model):
-    id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(User, on_delete = models.CASCADE)
-    title = models.CharField(max_length = 100, blank = True)
-    text = models.TextField(blank = True)
-    release_date = models.DateField(auto_now = True)
-    is_public = models.BooleanField(default = False)
-    likes = models.IntegerField(default = 0)
-    dislikes = models.IntegerField(default = 0)
-
-    def add_like(self):
-        self.likes += 1
-        self.save()
-
-    def add_dislike(self):
-        self.dislikes += 1
-        self.save()
-
-    def __str__(self):
-        return id
-
-
-class PostImage(models.Model):
-    post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "images")
-    image = models.ImageField(upload_to = "post_images", null = False)
-
-    def save(self, *args, **kwargs):
-        super().save()
-        tasks.change_jpg.delay(self.image)
-
-
-class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "comments")
-    id = models.AutoField(primary_key = True)
-    author = models.ForeignKey(User, on_delete = models.CASCADE)
-    release_date = models.DateField(auto_now = True)
-    text = models.CharField(max_length = 300, blank = False, null = False)
-    likes = models.IntegerField(default = 0)
-    dislikes = models.IntegerField(default = 0)
-
-    def __str__(self):
-        return f"{id} : {self.author.username}"
-
-    def add_like(self):
-        self.likes += 1
-        self.save()
-
-    def add_dislike(self):
-        self.dislikes += 1
-        self.save()
