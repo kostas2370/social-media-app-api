@@ -1,0 +1,14 @@
+from django.urls import path
+from .views import send_friend_request, accept_friend_request, get_friend_request, delete_friend, get_friend\
+                   , get_friend_of_other
+
+
+urlpatterns = [
+    path('sendrequest/<int:touserid>', send_friend_request, name="send_friend_request"),
+    path('acceptrequest/<int:requestid>', accept_friend_request, name="accept_friend_request"),
+    path('getrequest/', get_friend_request, name="get_friend_request"),
+    path('deletefriend/<int:friendid>', delete_friend, name="delete_friend"),
+    path('getfriend/', get_friend, name = "get_friend"),
+    path('getfriend/<int:otherid>', get_friend_of_other, name = "get_friend_of_other"),
+
+]
