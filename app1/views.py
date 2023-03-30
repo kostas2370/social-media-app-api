@@ -5,6 +5,8 @@ from . import tasks
 from rest_framework import status
 from .models import FriendRequest, User
 from .serializers import FriendRequestSerializer, UserSerializer
+from django.shortcuts import get_object_or_404
+from .serializers import PostUserSerializer
 
 
 @api_view(["GET"])
@@ -61,7 +63,7 @@ def accept_friend_request(request, requestid) -> JsonResponse:
 @api_view(["GET"])
 def get_friend(request):
     friends = [friend for friend in request.user.friends.all()]
-    return Response(UserSerializer(friends, many = True).data)
+    return Response(PostUserSerializer(friends, many = True).data)
 
 
 @api_view(["GET"])
@@ -75,7 +77,7 @@ def get_friend_of_other(request,otherid):
         if friend.check_if_friend(request.user) or friend.is_public:
             friends.append(friend)
 
-    return Response(UserSerializer(friends, many = True).data)
+    return Response(PostUserSerializer(friends, many = True).data)
 
 
 @api_view(["DELETE"])
@@ -96,3 +98,19 @@ def delete_friend(request, friendid) -> JsonResponse:
         to_friend[:1].get().delete()
 
     return JsonResponse({"Message": "Friend deleted successfully"}, status = status.HTTP_204_NO_CONTENT)
+
+
+# TODO GET USER INFORMATION
+@api_view(["GET"])
+def get_user(request, user_id=None):
+    if user_id is None:
+        return Response(UserSerializer(request.user).data)
+
+    user = get_object_or_404(User, id = user_id)
+
+    if not user.is_public and not user.check_if_friend(request.user):
+        return JsonResponse({"Message": "You dont have access at that profile"}, status = status.HTTP_401_UNAUTHORIZED)
+
+    else:
+        return Response(UserSerializer(user).data)
+

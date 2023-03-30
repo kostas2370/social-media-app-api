@@ -13,6 +13,7 @@ class UserTestCase(APITestCase):
         self.user = User.objects.create(username = 'admin', password = 'pass@123', email = 'admin@admin.com',
                                         date_of_birth = "2007-06-06")
         self.user.set_password("pass@123")
+        self.user.is_verified = True
         self.user.save()
 
     def test_register(self) -> None:
@@ -26,14 +27,17 @@ class UserTestCase(APITestCase):
         response2 = self.client.post(reverse("register"), data = data2, format = "json")
         response3 = self.client.post(reverse("register"), data = data3, format = "json")
 
-        self.assertEqual(response1.status_code, status.HTTP_200_OK)
+        self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response3.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_login(self):
-        self.assertTrue(self.client.login(username = "admin", password = "pass@123"))
-        self.assertFalse(self.client.login(username = "admin", password = "pass@13"))
-
+        response1 = self.client.post(reverse("login"), data = {"username": "admin", "password": "pass@123"})
+        self.assertEqual(response1.status_code, status.HTTP_200_OK)
+        self.user.is_verified = False
+        self.user.save()
+        response2 = self.client.post(reverse("login"), data = {"username": "admin", "password": "pass@123"})
+        self.assertEqual(response2.status_code, status.HTTP_401_UNAUTHORIZED)
 
 class FriendTestCase(APITestCase):
     def setUp(self) -> None:
@@ -111,4 +115,15 @@ class FriendTestCase(APITestCase):
         self.user1.is_public = True
         self.user1.save()
         response3 = self.client.get(reverse("get_friend_of_other", kwargs = {"otherid": self.user1.id}),)
+        self.assertEqual(response3.status_code, status.HTTP_200_OK)
+
+    def test_get_user(self) -> None:
+        self.client.force_authenticate(self.user1)
+        response1 = self.client.get(reverse("get_user", kwargs = {"user_id": self.user2.id}))
+        self.assertEqual(response1.status_code, status.HTTP_200_OK)
+        self.user3.is_public = False
+        self.user3.save()
+        response2 = self.client.get(reverse("get_user", kwargs = {"user_id": self.user3.id}))
+        self.assertEqual(response2.status_code, status.HTTP_401_UNAUTHORIZED)
+        response3 = self.client.get(reverse("get_my_info"))
         self.assertEqual(response3.status_code, status.HTTP_200_OK)

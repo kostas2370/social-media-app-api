@@ -1,13 +1,7 @@
 from .models import Post, PostImage, Comment, Likes, Dislikes
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField
-from app1.serializers import UserSerializer
-
-
-class PostUserSerializer(UserSerializer):
-
-    class Meta(UserSerializer.Meta):
-        fields = ('username', 'id', "is_official", "profile_image")
+from app1.serializers import PostUserSerializer
 
 
 class PostImageSerializer(serializers.ModelSerializer):

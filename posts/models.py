@@ -74,3 +74,4 @@ class Dislikes(models.Model):
     post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "dislikes")
     user = models.ForeignKey(User, on_delete = models.CASCADE)
 
+#  TODO CHECK IF THERE IS A NEED FOR MORE FIELDS

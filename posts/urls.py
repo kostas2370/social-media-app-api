@@ -4,3 +4,5 @@ urlpatterns = [
     path("getpost", get_post, name = "testurl")
 
 ]
+
+# TODO ADD URLS

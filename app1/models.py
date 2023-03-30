@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import app1.tasks as tasks
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class User(AbstractUser):
@@ -12,7 +13,8 @@ class User(AbstractUser):
     friends = models.ManyToManyField("User", blank = True)
     is_public = models.BooleanField(default = True)
     is_official = models.BooleanField(default = False)
-
+    is_verified = models.BooleanField(default = False)
+    is_active = models.BooleanField(default = True)
     REQUIRED_FIELDS = ["email", "date_of_birth"]
 
     def __str__(self):
@@ -28,6 +30,12 @@ class User(AbstractUser):
 
         return False
 
+    def get_tokens(self):
+        tokens = RefreshToken.for_user(self)
+        print("re eisai sovaros")
+
+        return {"access": str(tokens.access_token),
+                "refresh": str(tokens)}
 
 class FriendRequest(models.Model):
     id = models.AutoField(primary_key=True)

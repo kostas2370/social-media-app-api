@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import send_friend_request, accept_friend_request, get_friend_request, delete_friend, get_friend\
-                   , get_friend_of_other
+                   , get_friend_of_other, get_user
 
 
 urlpatterns = [
@@ -10,5 +10,7 @@ urlpatterns = [
     path('deletefriend/<int:friendid>', delete_friend, name="delete_friend"),
     path('getfriend/', get_friend, name = "get_friend"),
     path('getfriend/<int:otherid>', get_friend_of_other, name = "get_friend_of_other"),
+    path('user/<int:user_id>', get_user, name = "get_user"),
+    path('user/', get_user, name = "get_my_info")
 
 ]
