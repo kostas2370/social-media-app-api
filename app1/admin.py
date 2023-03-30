@@ -10,7 +10,7 @@ class UserAdmin(admin.ModelAdmin):
 
     fieldsets = (*UserAdmin.fieldsets,
                  ('Other Personal info',
-                  {'fields': ('date_of_birth', 'friends')})
+                  {'fields': ('date_of_birth', 'friends', 'is_verified', 'ips')})
                  )
 
 

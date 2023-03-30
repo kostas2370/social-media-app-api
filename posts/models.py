@@ -2,6 +2,7 @@ from django.db import models
 from app1 import tasks
 from app1.models import User
 from taggit.managers import TaggableManager
+from app1.models import IpAddress
 
 
 class Post(models.Model):
@@ -13,6 +14,11 @@ class Post(models.Model):
     release_date = models.DateField(auto_now = True)
     is_public = models.BooleanField(default = False)
     tags = TaggableManager()
+    views = models.ManyToManyField(IpAddress, blank = True)
+
+    def add_ip(self,ip):
+        if ip not in self.views.all():
+            self.views.add(ip.id)
 
     def add_like(self, user: User):
         if Dislikes.objects.filter(post = self, user = user).all().count() >= 1:
@@ -75,3 +81,5 @@ class Dislikes(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
 
 #  TODO CHECK IF THERE IS A NEED FOR MORE FIELDS
+
+

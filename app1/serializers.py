@@ -3,6 +3,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 
+
 class RegisterSerializer(serializers.ModelSerializer):
     profile_image = serializers.ImageField(required=False, use_url=True, allow_empty_file = False)
     sex = serializers.CharField(required = False)
@@ -43,7 +44,8 @@ class LoginSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "email", "date_of_birth", "sex", "profile_image", "is_official", "is_verified")
+        fields = ("username", "email", "date_of_birth", "sex", "profile_image", "is_official", "is_verified",
+                  "is_active")
 
 
 class PostUserSerializer(UserSerializer):

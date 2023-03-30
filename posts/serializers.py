@@ -22,6 +22,7 @@ class CommentsSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only = True)
     tags = TagListSerializerField()
     title = serializers.CharField(required = False)
     author = PostUserSerializer()
@@ -32,11 +33,13 @@ class PostSerializer(serializers.ModelSerializer):
     comments = CommentsSerializer(many = True)
     likes = serializers.IntegerField(source = "likes.count")
     dislikes = serializers.IntegerField(source = "dislikes.count")
+    views = serializers.IntegerField(source = "views.count")
+
 
     class Meta:
         model = Post
         fields = ["id", "title", "author", "text", "release_date", "tags", "post_images", "comments", "likes",
-                  "dislikes", "upload_image"]
+                  "dislikes", "upload_image", "views"]
 
     def create(self, validated_data):
         images = validated_data.pop("upload_image")

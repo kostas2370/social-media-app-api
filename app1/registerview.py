@@ -10,7 +10,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 import jwt
 from django.conf import settings
-
+from .utils import get_ip
+from .models import IpAddress
 
 class UserRegisterView(generics.GenericAPIView):
 
@@ -56,10 +57,10 @@ class VerifyEmail(generics.GenericAPIView):
 
             return Response({"email": "Successfuly Activated"}, status=status.HTTP_200_OK)
 
-        except jwt.ExpiredSignatureError as error:
+        except jwt.ExpiredSignatureError:
             return Response({"error": "Token Expired"}, status = status.HTTP_400_BAD_REQUEST)
 
-        except jwt.DecodeError as error:
+        except jwt.DecodeError:
             return Response({"error": "Invalid Token"}, status = status.HTTP_400_BAD_REQUEST)
 
 
@@ -71,4 +72,20 @@ class LoginView(generics.GenericAPIView):
         serializer = self.serializer_class(data = request.data)
 
         serializer.is_valid(raise_exception = True)
+        user_ip = get_ip(request)
+        user = User.objects.get(username = request.data["username"])
+        meh = IpAddress.objects.filter(ip = user_ip).all()
+        if meh.count() == 0:
+            ip = IpAddress.objects.create(ip = user_ip)
+        else:
+            ip = meh[:1].get()
+
+        if ip not in user.ips.all():
+            send_email.delay("Someone logined to your account !", user.email, f"Someone with ip of {user_ip} logined to yo"
+                                                                              f"ur account !")
+            user.ips.add(ip)
+            user.save()
         return Response(serializer.data, status = status.HTTP_200_OK)
+
+
+# TODO UPDATE AND DELETE ACCOUNT
