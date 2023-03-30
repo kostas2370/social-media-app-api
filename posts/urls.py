@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import get_post
+from .views import get_feed
 urlpatterns = [
-    path("getpost", get_post, name = "testurl")
+    path("getpost", get_feed, name = "testurl")
 
 ]
 

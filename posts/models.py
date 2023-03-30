@@ -3,22 +3,23 @@ from app1 import tasks
 from app1.models import User
 from taggit.managers import TaggableManager
 from app1.models import IpAddress
+from app1.utils import get_ip
 
 
 class Post(models.Model):
 
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(User, on_delete = models.CASCADE)
+    author = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "posts")
     title = models.CharField(max_length = 100, blank = True, null = True)
     text = models.TextField(blank = True)
-    release_date = models.DateField(auto_now = True)
+    upload_date = models.DateField(auto_now = True)
     is_public = models.BooleanField(default = False)
     tags = TaggableManager()
     views = models.ManyToManyField(IpAddress, blank = True)
 
-    def add_ip(self,ip):
+    def add_view(self, ip):
         if ip not in self.views.all():
-            self.views.add(ip.id)
+            self.views.add(ip)
 
     def add_like(self, user: User):
         if Dislikes.objects.filter(post = self, user = user).all().count() >= 1:
@@ -82,4 +83,4 @@ class Dislikes(models.Model):
 
 #  TODO CHECK IF THERE IS A NEED FOR MORE FIELDS
 
-
+#  TODO NEED TO DO DIFFERENT MODELS FOR IP ADDRESSES
