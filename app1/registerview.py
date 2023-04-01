@@ -11,10 +11,10 @@ from django.urls import reverse
 import jwt
 from django.conf import settings
 from .utils import get_ip
-from .models import IpAddress
+from .models import LoginUserList
+
 
 class UserRegisterView(generics.GenericAPIView):
-
     serializer_class = RegisterSerializer
     permission_classes = (AllowAny,)
     authentication_classes = []
@@ -22,19 +22,18 @@ class UserRegisterView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data = request.data)
 
-        if serializer.is_valid(raise_exception = True):
-            serializer.save()
+        serializer.is_valid(raise_exception = True)
+        serializer.save()
 
-        user_data = serializer.data
-        user = User.objects.get(email=user_data["email"])
+        user = User.objects.get(email=serializer.data["email"])
         user.set_password(request.data["password"])
         user.save()
+
         token = RefreshToken.for_user(user).access_token
 
         current_site = get_current_site(request).domain
 
-        link = reverse('email-verify')
-        absurl = f'{current_site}{link}?token={str(token)}'
+        absurl = f'{current_site}{reverse("email-verify")}?token={str(token)}'
 
         send_email.delay("Register verification", user.email, f"Thank you, here is the verification link : {absurl}")
 
@@ -70,22 +69,23 @@ class LoginView(generics.GenericAPIView):
 
     def post(self, request):
         serializer = self.serializer_class(data = request.data)
-
+        user = User.objects.get(username = request.data["username"])
         serializer.is_valid(raise_exception = True)
         user_ip = get_ip(request)
-        user = User.objects.get(username = request.data["username"])
-        meh = IpAddress.objects.filter(ip = user_ip).all()
-        if meh.count() == 0:
-            ip = IpAddress.objects.create(ip = user_ip)
-        else:
-            ip = meh[:1].get()
+        ips = LoginUserList.objects.filter(ip = user_ip, user = user).all()
+        if ips.count() == 0:
 
-        if ip not in user.ips.all():
+            ip = LoginUserList.objects.create(user = user, ip = user_ip)
+        else:
+            ip = ips[:1].get()
+            ip.login_count += 1
+            ip.save()
+        if ip not in user.logins.all() and ip.login_count == 1:
             send_email.delay("Someone logined to your account !", user.email, f"Someone with ip of {user_ip} logined to yo"
                                                                               f"ur account !")
-            user.ips.add(ip)
+
             user.save()
         return Response(serializer.data, status = status.HTTP_200_OK)
 
 
-# TODO UPDATE AND DELETE ACCOUNT
+ 

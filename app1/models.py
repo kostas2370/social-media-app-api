@@ -4,22 +4,14 @@ import app1.tasks as tasks
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-class IpAddress(models.Model):
-
-    ip = models.CharField(max_length = 15)
-
-    def __str__(self):
-        return self.ip
-
-
 class User(AbstractUser):
+
     sex_choices =(('M', 'MALE'), ('F', 'FEMALE'), ('O', 'OTHER'))
     email = models.EmailField(unique = True)
     date_of_birth = models.DateField()
     profile_image = models.ImageField(default = "default.jpg",upload_to = "profile_pics")
     sex = models.CharField(default = 'O', choices =sex_choices, max_length = 1)
     friends = models.ManyToManyField("User", blank = True)
-    ips = models.ManyToManyField(IpAddress, blank = True)
     is_public = models.BooleanField(default = True)
     is_official = models.BooleanField(default = False)
     is_verified = models.BooleanField(default = False)
@@ -60,8 +52,10 @@ class FriendRequest(models.Model):
     def __str__(self):
         return f"{self.id} : {self.from_user.username} to {self.to_user.username}"
 
-
-
-
-
 # TODO USER BAN LIST , USER INTERESTS , USER GROUPS, IPADRESS , VIEW COUNT
+
+
+class LoginUserList(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "logins")
+    ip = models.CharField(max_length = 15)
+    login_count = models.IntegerField(default = 1)

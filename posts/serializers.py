@@ -35,7 +35,6 @@ class PostSerializer(serializers.ModelSerializer):
     dislikes = serializers.IntegerField(source = "dislikes.count")
     views = serializers.IntegerField(source = "views.count")
 
-
     class Meta:
         model = Post
         fields = ["id", "title", "author", "text", "upload_date", "tags", "post_images", "comments", "likes",

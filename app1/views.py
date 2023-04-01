@@ -92,7 +92,7 @@ def delete_friend(request, friendid) -> JsonResponse:
 
     from_friend = FriendRequest.objects.filter(from_user = user, to_user = friend)
     to_friend = FriendRequest.objects.filter(from_user = friend, to_user = user)
-    if from_friend.count() == 1:
+    if from_friend.exists():
         from_friend[:1].get().delete()
     else:
         to_friend[:1].get().delete()

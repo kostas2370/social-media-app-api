@@ -2,7 +2,6 @@ from django.db import models
 from app1 import tasks
 from app1.models import User
 from taggit.managers import TaggableManager
-from app1.models import IpAddress
 from app1.utils import get_ip
 
 
@@ -15,11 +14,17 @@ class Post(models.Model):
     upload_date = models.DateField(auto_now = True)
     is_public = models.BooleanField(default = False)
     tags = TaggableManager()
-    views = models.ManyToManyField(IpAddress, blank = True)
 
-    def add_view(self, ip):
-        if ip not in self.views.all():
-            self.views.add(ip)
+    def add_view(self, ip, user):
+
+        gt_ip = PostView.objects.filter(post = self, user = user)
+
+        if gt_ip .count() == 0:
+            PostView.objects.create(ip = ip, post = self, user = user)
+        else:
+            bruh = gt_ip.first()
+            bruh.times_count += 1
+            bruh.save()
 
     def add_like(self, user: User):
         if Dislikes.objects.filter(post = self, user = user).all().count() >= 1:
@@ -49,7 +54,7 @@ class Post(models.Model):
         return self.dislikes.objects.all().count()
 
     def __str__(self):
-        return str(self.id)
+        return f"{str(self.id)} {self.title}"
 
 
 class PostImage(models.Model):
@@ -84,3 +89,13 @@ class Dislikes(models.Model):
 #  TODO CHECK IF THERE IS A NEED FOR MORE FIELDS
 
 #  TODO NEED TO DO DIFFERENT MODELS FOR IP ADDRESSES
+
+
+class PostView(models.Model):
+    post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "views")
+    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "viewer")
+    ip = models.CharField(max_length = 15)
+    times_count = models.IntegerField(default = 1)
+
+    def __str__(self):
+        return self.user.username

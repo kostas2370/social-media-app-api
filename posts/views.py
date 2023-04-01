@@ -1,12 +1,14 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from app1.models import IpAddress
-from .models import Post
+from .models import Post, PostView
 from .serializers import PostSerializer
 from app1.utils import get_ip
 from datetime import timedelta, date
 from itertools import chain
-
+from app1.models import User
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 
 @api_view(["GET"])
 def get_feed(request):
@@ -16,16 +18,13 @@ def get_feed(request):
     friend_posts = Post.objects.filter(upload_date__lte = date.today(),
                                        upload_date__gte = datet,
                                        is_public = True,
-                                       author__friends = request. user,
-                                       ).exclude(views__ip = ipa
-                                                 ).order_by("?")[:60]
+                                       author__friends = request.user,
+                                       ).order_by("?")[:60]
 
     official_posts = Post.objects.filter(upload_date__lte = date.today(),
                                          upload_date__gte = date.today() - timedelta(days = 7),
                                          author__is_official = True
-                                         ).exclude(views__ip = ipa
-                                                   ).exclude(author__friends = request.user
-                                                             ).order_by("?")[:30]
+                                         ).order_by("?")[:30]
 
     random_posts = Post.objects.filter(upload_date__lte = date.today(),
                                        upload_date__gte = datet,
@@ -33,23 +32,30 @@ def get_feed(request):
                                        author__is_public = True,
                                        author__is_official = False,
                                        ).exclude(author__friends = request.user
-                                                 ).exclude(views__ip = ipa
-                                                           ).order_by("?")[:20]
+                                                 ).order_by("?")[:20]
 
     posts = list(chain(friend_posts, official_posts, random_posts))
-    ips = IpAddress.objects.filter(ip = ipa).all()
-
-    if not ips.count():
-
-        ip = IpAddress.objects.create(ip = ipa)
-        ip.save()
-
-    else:
-        ip = ips[:1]
 
     for post in posts:
-        post.add_view(ip.get())
+        post.add_view(ipa, request.user)
 
     return Response(PostSerializer(posts, many = True).data)
 
 # TODO POST VIEWS
+
+
+@api_view(["GET"])
+def get_post(request, publisher=None, post_id=None):
+    if publisher:
+        author = get_object_or_404(User, id= publisher)
+        posts = Post.objects.filter(Q(author = author),
+                                    Q(author__is_public = True) | Q(author__friends = request.user)
+                                    )
+    elif post_id:
+        posts = get_object_or_404(id = post_id)
+        if request.user not in posts.author.friends.all() and not posts.author.is_public:
+            return Response({"Message" : "You dont have access to this post"}, status = status.HTTP_401_UNAUTHORIZED)
+
+
+    serializer = PostSerializer(posts, many = True)
+    return Response(serializer.data)
