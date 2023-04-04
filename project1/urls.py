@@ -29,5 +29,5 @@ urlpatterns = [
     path('api/register/', UserRegisterView.as_view(), name="register"),
     path('api/email-verify/', VerifyEmail.as_view(), name="email-verify"),
     path('api/', include("app1.urls")),
-    path('api/posts/', include("posts.urls"))
+    path('api/', include("posts.urls"))
 ]

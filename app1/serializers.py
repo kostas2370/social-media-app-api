@@ -26,9 +26,7 @@ class LoginSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         username = attrs.get("username", '')
         password = attrs.get("password", '')
-
         auser = authenticate(username = username, password = password)
-        print(auser)
         if not auser:
             raise AuthenticationFailed("There is not a user with that credentials")
         if not auser.is_verified:
