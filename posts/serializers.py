@@ -25,15 +25,14 @@ class PostSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only = True)
     tags = TagListSerializerField()
     title = serializers.CharField(required = False)
-    author = PostUserSerializer()
-    post_images = PostImageSerializer(many = True)
+    post_images = PostImageSerializer(many = True, read_only = True)
     upload_image = serializers.ListSerializer(
         child = serializers.ImageField(max_length = 10000000, allow_empty_file = False,
-                                       use_url = False, write_only = True), write_only = True)
-    comments = CommentsSerializer(many = True)
-    likes = serializers.IntegerField(source = "likes.count")
-    dislikes = serializers.IntegerField(source = "dislikes.count")
-    views = serializers.IntegerField(source = "views.count")
+                                       use_url = False, write_only = True), required = False, write_only = True)
+    comments = CommentsSerializer(many = True, read_only = True)
+    likes = serializers.IntegerField(source = "likes.count", read_only = True)
+    dislikes = serializers.IntegerField(source = "dislikes.count", read_only = True)
+    views = serializers.IntegerField(source = "views.count", read_only = True)
 
     class Meta:
         model = Post
@@ -41,12 +40,20 @@ class PostSerializer(serializers.ModelSerializer):
                   "dislikes", "upload_image", "views"]
 
     def create(self, validated_data):
-        images = validated_data.pop("upload_image")
+        images = []
+        if validated_data.get("upload_image"):
+            images = validated_data.pop("upload_image")
+
         post = Post.objects.create(**validated_data)
 
         for image in images:
             PostImage.objects.create(post = post, image = image)
 
         return post
+
+    def to_representation(self, instance):
+        self.fields["author"] = PostUserSerializer()
+        return super(PostSerializer, self).to_representation(instance)
+
 
 

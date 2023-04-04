@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Post, PostView
-from .serializers import PostSerializer
+from .serializers import PostSerializer,PostUserSerializer
 from app1.utils import get_ip
 from datetime import timedelta, date
 from itertools import chain
@@ -9,6 +9,7 @@ from app1.models import User
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+
 
 @api_view(["GET"])
 def get_feed(request):
@@ -56,6 +57,14 @@ def get_post(request, publisher=None, post_id=None):
         if request.user not in posts.author.friends.all() and not posts.author.is_public:
             return Response({"Message" : "You dont have access to this post"}, status = status.HTTP_401_UNAUTHORIZED)
 
-
     serializer = PostSerializer(posts, many = True)
     return Response(serializer.data)
+
+
+@api_view(["POST"])
+def add_post(request):
+    request.data["author"] = request.user.id
+    serializer = PostSerializer(data = request.data)
+    serializer.is_valid(raise_exception = True)
+    serializer.save()
+    return Response(data = serializer.data, status = status.HTTP_201_CREATED)

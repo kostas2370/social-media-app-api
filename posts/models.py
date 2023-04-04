@@ -88,8 +88,6 @@ class Dislikes(models.Model):
 
 #  TODO CHECK IF THERE IS A NEED FOR MORE FIELDS
 
-#  TODO NEED TO DO DIFFERENT MODELS FOR IP ADDRESSES
-
 
 class PostView(models.Model):
     post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "views")
