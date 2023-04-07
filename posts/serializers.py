@@ -25,7 +25,7 @@ class CommentsSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only = True)
-    tags = TagListSerializerField()
+    tags = TagListSerializerField(required = False)
     title = serializers.CharField(required = False)
     post_images = PostImageSerializer(many = True, read_only = True)
     comments = CommentsSerializer(many = True, read_only = True)

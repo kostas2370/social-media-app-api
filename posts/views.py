@@ -42,7 +42,6 @@ def get_feed(request):
     return Response(PostSerializer(posts, many = True).data)
 
 
-
 @api_view(["GET"])
 def get_post(request):
     publisher = request.query_params.get("publisher", None)
@@ -78,16 +77,20 @@ def add_post(request):
 @api_view(["DELETE"])
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id = post_id)
-    if post.author == request.user:
-        post.delete()
-        return Response({"Message": "Post got deleted succesfully"}, status = status.HTTP_204_NO_CONTENT)
 
-    return Response({"Message": "UNAUTHORIZED"}, status = status.HTTP_401_UNAUTHORIZED)
+    if post.author != request.user:
+        return Response({"Message": "UNAUTHORIZED"}, status = status.HTTP_401_UNAUTHORIZED)
+
+    post.delete()
+    return Response({"Message": "Post got deleted succesfully"}, status = status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["PUT"])
 def update_post(request, post_id):
     post = get_object_or_404(Post, id= post_id)
+    if post.author != request.user:
+        return Response({"Message": "UNAUTHORIZED"}, status = status.HTTP_401_UNAUTHORIZED)
+
     images = request.FILES.getlist('upload_image')
     serializer = PostSerializer(instance = post, data = request.data, partial = True, context = {'upload_image': images}
                                 )
@@ -97,8 +100,11 @@ def update_post(request, post_id):
 
 
 @api_view(["DELETE"])
-def delete_image(request, post_id, image_id):
+def delete_post_image(request, post_id, image_id):
     post = get_object_or_404(Post, id = post_id)
+    if post.author != request.user:
+        return Response({"Message": "UNAUTHORIZED"}, status = status.HTTP_401_UNAUTHORIZED)
+
     image = get_object_or_404(PostImage, post = post, id = image_id)
     image.delete()
     return Response({"Message": "Image deleted"}, status = status.HTTP_204_NO_CONTENT)

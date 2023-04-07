@@ -39,6 +39,7 @@ class UserTestCase(APITestCase):
         response2 = self.client.post(reverse("login"), data = {"username": "admin", "password": "pass@123"})
         self.assertEqual(response2.status_code, status.HTTP_401_UNAUTHORIZED)
 
+
 class FriendTestCase(APITestCase):
     def setUp(self) -> None:
         self.user1 = User.objects.create(username = 'admin', password = 'pass@123', email = 'admin@admin.com',
