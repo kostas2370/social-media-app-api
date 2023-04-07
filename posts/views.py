@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Post, PostView
-from .serializers import PostSerializer,PostUserSerializer
+from .models import Post, PostImage
+from .serializers import PostSerializer, PostUserSerializer
 from app1.utils import get_ip
 from datetime import timedelta, date
 from itertools import chain
@@ -43,7 +43,6 @@ def get_feed(request):
 
 
 
-
 @api_view(["GET"])
 def get_post(request):
     publisher = request.query_params.get("publisher", None)
@@ -67,11 +66,12 @@ def get_post(request):
 
 @api_view(["POST"])
 def add_post(request):
+
     request.data["author"] = request.user.id
-    serializer = PostSerializer(data = request.data)
+    images = request.FILES.getlist('upload_image')
+    serializer = PostSerializer(data = request.data, context={'upload_image': images})
     serializer.is_valid(raise_exception = True)
     serializer.save()
-
     return Response(data = serializer.data, status = status.HTTP_201_CREATED)
 
 
@@ -85,13 +85,22 @@ def delete_post(request, post_id):
     return Response({"Message": "UNAUTHORIZED"}, status = status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(["PATCH"])
+@api_view(["PUT"])
 def update_post(request, post_id):
-
     post = get_object_or_404(Post, id= post_id)
-    serializer = PostSerializer(instance = post, data = request.data, partial = True)
+    images = request.FILES.getlist('upload_image')
+    serializer = PostSerializer(instance = post, data = request.data, partial = True, context = {'upload_image': images}
+                                )
     serializer.is_valid(raise_exception = True)
     serializer.save()
     return Response(serializer.data)
 
-# TODO I HAVE to fix the image problem with posts
+
+@api_view(["DELETE"])
+def delete_image(request, post_id, image_id):
+    post = get_object_or_404(Post, id = post_id)
+    image = get_object_or_404(PostImage, post = post, id = image_id)
+    image.delete()
+    return Response({"Message": "Image deleted"}, status = status.HTTP_204_NO_CONTENT)
+
+

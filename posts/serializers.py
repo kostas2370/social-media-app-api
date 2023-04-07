@@ -2,6 +2,8 @@ from .models import Post, PostImage, Comment, Likes, Dislikes
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField
 from app1.serializers import PostUserSerializer
+from django.core.files.base import ContentFile
+
 
 
 class PostImageSerializer(serializers.ModelSerializer):
@@ -26,9 +28,6 @@ class PostSerializer(serializers.ModelSerializer):
     tags = TagListSerializerField()
     title = serializers.CharField(required = False)
     post_images = PostImageSerializer(many = True, read_only = True)
-    upload_image = serializers.ListSerializer(
-        child = serializers.ImageField(max_length = 10000000, allow_empty_file = False,
-                                       use_url = False), required = False, write_only = True)
     comments = CommentsSerializer(many = True, read_only = True)
     likes = serializers.IntegerField(source = "likes.count", read_only = True)
     dislikes = serializers.IntegerField(source = "dislikes.count", read_only = True)
@@ -38,18 +37,14 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ["id", "title", "author", "text", "upload_date", "tags", "post_images", "comments", "likes",
-                  "dislikes", "upload_image", "views", "is_public"]
+                  "dislikes", "views", "is_public"]
 
     def create(self, validated_data):
-        print(validated_data)
-        images = []
-        if validated_data.get("upload_image"):
-            images = validated_data.pop("upload_image")
-
+        images = self.context["upload_image"]
         post = Post.objects.create(**validated_data)
-
-        for image in images:
-            PostImage.objects.create(post = post, image = image)
+        if images:
+            for image in images:
+                PostImage.objects.create(post = post, image = image)
 
         return post
 
@@ -61,9 +56,9 @@ class PostSerializer(serializers.ModelSerializer):
         instance.tags = validated_data.get('tags', instance.tags)
         instance.title = validated_data.get('title', instance.title)
         instance.is_public = validated_data.get('is_public', instance.is_public)
-        images = validated_data.get("upload_image")
+        instance.text = validated_data.get("text", instance.text)
+        images = self.context["upload_image"]
         if images:
-            instance.post_images.clear()
             for image in images:
                 PostImage.objects.create(post = instance, image = image)
         instance.save()
