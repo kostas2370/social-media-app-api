@@ -81,12 +81,18 @@ class Likes(models.Model):
     post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "likes")
     user = models.ForeignKey(User, on_delete = models.CASCADE)
 
+    class Meta:
+        unique_together = ('post', 'user')
+
 
 class Dislikes(models.Model):
+
     post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "dislikes")
     user = models.ForeignKey(User, on_delete = models.CASCADE)
 
 #  TODO CHECK IF THERE IS A NEED FOR MORE FIELDS
+    class Meta:
+        unique_together = ('post', 'user')
 
 
 class PostView(models.Model):
@@ -97,3 +103,6 @@ class PostView(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    class Meta:
+        unique_together = ('post', 'user')

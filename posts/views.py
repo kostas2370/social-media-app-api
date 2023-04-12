@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Post, PostImage
-from .serializers import PostSerializer, PostUserSerializer
+from .serializers import PostSerializer, CommentsSerializer
 from app1.utils import get_ip
 from datetime import timedelta, date
 from itertools import chain
@@ -16,21 +16,26 @@ def get_feed(request):
     datet = date.today() - timedelta(days = 3)
     ipa = get_ip(request)
     # TODO have to improve the filtering
-    friend_posts = Post.objects.filter(upload_date__lte = date.today(),
+    friend_posts = Post.objects.filter(
+                                       upload_date__lte = date.today(),
                                        upload_date__gte = datet,
                                        author__friends = request.user,
                                        ).order_by("?")[:60]
 
-    official_posts = Post.objects.filter(upload_date__lte = date.today(),
+    official_posts = Post.objects.filter(
+                                         upload_date__lte = date.today(),
                                          upload_date__gte = date.today() - timedelta(days = 7),
                                          author__is_official = True
-                                         ).order_by("?")[:30]
+                                         ).exclude(author__friends = request.user
+                                                   ).order_by("?")[:30]
 
-    random_posts = Post.objects.filter(upload_date__lte = date.today(),
+    random_posts = Post.objects.filter(
+                                       upload_date__lte = date.today(),
                                        upload_date__gte = datet,
                                        is_public = True,
                                        author__is_public = True,
                                        author__is_official = False,
+
                                        ).exclude(author__friends = request.user
                                                  ).order_by("?")[:20]
 
@@ -82,7 +87,7 @@ def delete_post(request, post_id):
         return Response({"Message": "UNAUTHORIZED"}, status = status.HTTP_401_UNAUTHORIZED)
 
     post.delete()
-    return Response({"Message": "Post got deleted succesfully"}, status = status.HTTP_204_NO_CONTENT)
+    return Response({"Message": "Post got deleted successfully"}, status = status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["PUT"])
@@ -109,4 +114,29 @@ def delete_post_image(request, post_id, image_id):
     image.delete()
     return Response({"Message": "Image deleted"}, status = status.HTTP_204_NO_CONTENT)
 
+
+@api_view(["POST"])
+def add_post_like(request, post_id):
+    post = get_object_or_404(Post, id = post_id)
+    post.add_like(request.user)
+    return Response({"Message": "Like added successfully"}, status = status.HTTP_201_CREATED)
+
+
+@api_view(["POST"])
+def add_post_dislike(request, post_id):
+    post = get_object_or_404(Post, id = post_id)
+    post.add_dislike(request.user)
+
+    return Response({"Message": "Dislike added successfully"}, status = status.HTTP_201_CREATED)
+
+
+@api_view(["POST"])
+def add_post_comment(request, post_id):
+    request.data["author"] = request.user.id
+    request.data["post"] = post_id
+    serializer = CommentsSerializer(data = request.data)
+    serializer.is_valid(raise_exception = True)
+    serializer.save()
+
+    return Response({"Message": "Comment created successfully"}, status = status.HTTP_201_CREATED)
 

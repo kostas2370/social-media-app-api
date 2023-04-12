@@ -5,9 +5,6 @@ from .models import Post, PostImage
 from app1.models import User
 from PIL import Image
 import tempfile
-import json
-
-# TODO CREATE TESTS FOR POSTS
 
 
 class PostTestCase(APITestCase):

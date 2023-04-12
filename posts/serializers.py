@@ -5,7 +5,6 @@ from app1.serializers import PostUserSerializer
 from django.core.files.base import ContentFile
 
 
-
 class PostImageSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -15,12 +14,15 @@ class PostImageSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
-    author = PostUserSerializer()
 
     class Meta:
         model = Comment
         fields = ["post", "id", "author", "release_date", "text"]
         extra_kwargs = {'post': {'write_only': True}, }
+
+    def to_representation(self, instance):
+        self.fields["author"] = PostUserSerializer()
+        return super(CommentsSerializer, self).to_representation(instance)
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -61,6 +63,7 @@ class PostSerializer(serializers.ModelSerializer):
         if images:
             for image in images:
                 PostImage.objects.create(post = instance, image = image)
+
         instance.save()
         return instance
 
