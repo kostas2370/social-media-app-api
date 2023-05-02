@@ -13,7 +13,7 @@ from rest_framework import status
 
 @api_view(["GET"])
 def get_feed(request):
-    datet = date.today() - timedelta(days = 3)
+    datet = date.today() - timedelta(days = 30)
     ipa = get_ip(request)
     # TODO have to improve the filtering
     friend_posts = Post.objects.filter(

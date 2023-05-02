@@ -17,6 +17,8 @@ class User(AbstractUser):
     is_verified = models.BooleanField(default = False)
     is_staff = models.BooleanField(default = False)
     is_active = models.BooleanField(default = True)
+    is_online = models.BooleanField(default = False)
+
     REQUIRED_FIELDS = ["email", "date_of_birth"]
 
     def __str__(self):
