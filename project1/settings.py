@@ -182,7 +182,8 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
-
+#on_production
+"""
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -190,6 +191,13 @@ CHANNEL_LAYERS = {
             'hosts': [('127.0.0.1', 6379)]
         }
 
+    }
+}
+"""
+#While testing
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
 
