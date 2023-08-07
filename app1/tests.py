@@ -17,11 +17,11 @@ class UserTestCase(APITestCase):
         self.user.save()
 
     def test_register(self) -> None:
-        data1 = {"username": "pagotos", "password": "mastoras123", "email": "test@gmail.com",
+        data1 = {"username": "pagotos", "password": "Mastoras123", "email": "test@gmail.com",
                  "date_of_birth": "2002-06-07"}
         data2 = {"username": "pagotos1", "password": "mastoras123", "email": "test@gmail.com",
-                 "date_of_birth": "06-06-2007"}
-        data3 = {"username": "admin", "password": "pass@123", "email": "admin@admin.com", "date_of_birth": "2002-06-07"}
+                 "date_of_birth": "06-06-2001"}
+        data3 = {"username": "adminAss", "password": "Pass@123a", "email": "admin@ieseg.fr", "date_of_birth": "2014-06-07"}
 
         response1 = self.client.post(reverse("register"), data = data1, format = "json")
         response2 = self.client.post(reverse("register"), data = data2, format = "json")
@@ -29,7 +29,7 @@ class UserTestCase(APITestCase):
 
         self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response3.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response3.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_login(self):
         response1 = self.client.post(reverse("login"), data = {"username": "admin", "password": "pass@123"})

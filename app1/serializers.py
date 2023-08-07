@@ -2,6 +2,9 @@ from .models import User, FriendRequest
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+from datetime import datetime
+from dateutil import relativedelta
+from .utils import check_if_university_domain
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -12,6 +15,32 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'password', "email", "date_of_birth", "profile_image", "sex")
         extra_kwargs = {'password': {'write_only': True}, }
+
+    def validate(self, attrs):
+        def conds(password: str) -> bool:
+            passwordCheck = [lambda s: any(x.isupper() for x in s),
+                             lambda s: any(x.islower() for x in s),
+                             lambda s: any(x.isdigit() for x in s),
+                             lambda s: len(s) >= 8, ]
+
+            return all(condition(password) for condition in passwordCheck)
+
+        email = attrs.get("email")
+
+        password = attrs.get("password")
+
+        if relativedelta.relativedelta(datetime.now(), attrs.get("date_of_birth")).years < 18:
+
+            raise AuthenticationFailed("You must be over 18")
+
+        if not conds(password):
+            raise AuthenticationFailed("Your password must contain at least 8 chars ,uppercase ,lowercase ,digit")
+
+        if not check_if_university_domain(email):
+
+            raise AuthenticationFailed("Your email must be academic email")
+
+        return super().validate(attrs)
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -37,7 +66,7 @@ class LoginSerializer(serializers.ModelSerializer):
         return {
             "tokens": auser.get_tokens()
         }
-        return super().validate(attrs)
+
 
 
 class UserSerializer(serializers.ModelSerializer):

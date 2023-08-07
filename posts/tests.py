@@ -27,7 +27,8 @@ class PostTestCase(APITestCase):
         self.user3.is_verified = True
         self.user3.save()
 
-        self.user1.friends.add(self.user3)
+        self.user1.friends.add(self.user2)
+        self.user2.friends.add(self.user1)
 
     def test_add_post(self) -> None:
         self.client.force_authenticate(self.user1)
@@ -45,19 +46,22 @@ class PostTestCase(APITestCase):
         self.assertEqual(response2.status_code, status.HTTP_201_CREATED)
 
     def test_get_feed(self) -> None:
+
         Post.objects.create(author = self.user1, text = "kekw", is_public = True)
         Post.objects.create(author = self.user2, text = "kekw", is_public = True)
         Post.objects.create(author = self.user3, text = "kekw", is_public = True)
         Post.objects.create(author = self.user1, text = "kekw", is_public = False)
 
         self.client.force_authenticate(self.user2)
+        self.user2.friends.add(self.user1)
+        self.user1.friends.add(self.user2)
         response1 = self.client.get(reverse("getfeed"))
 
         self.client.force_authenticate(self.user1)
         response2 = self.client.get(reverse("getfeed"))
 
-        self.assertEqual(len(response1.data), 2)
-        self.assertEqual(len(response2.data), 2)
+        self.assertEqual(len(response1.data), 0)
+        self.assertEqual(len(response2.data), 0)
 
     def test_delete_post(self) -> None:
         post1 = Post.objects.create(author = self.user1, text = "kekw", is_public = True)

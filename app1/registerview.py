@@ -26,6 +26,7 @@ class UserRegisterView(generics.GenericAPIView):
         serializer.save()
 
         user = User.objects.get(email=serializer.data["email"])
+
         user.set_password(request.data["password"])
         user.save()
 
@@ -81,7 +82,8 @@ class LoginView(generics.GenericAPIView):
             ip.login_count += 1
             ip.save()
         if ip not in user.logins.all() and ip.login_count == 1:
-            send_email.delay("Someone logined to your account !", user.email, f"Someone with ip of {user_ip} logined to yo"
+            send_email.delay("Someone logined to your account !", user.email, f"Someone with ip of {user_ip} logined to"
+                                                                              f" yo"
                                                                               f"ur account !")
 
             user.save()

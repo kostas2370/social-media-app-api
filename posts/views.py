@@ -20,12 +20,14 @@ def get_feed(request):
                                        upload_date__lte = date.today(),
                                        upload_date__gte = datet,
                                        author__friends = request.user,
+                                       views__times_count__lt = 5
                                        ).order_by("?")[:60]
 
     official_posts = Post.objects.filter(
                                          upload_date__lte = date.today(),
                                          upload_date__gte = date.today() - timedelta(days = 7),
-                                         author__is_official = True
+                                         author__is_official = True,
+                                         views__times_count__lt = 5
                                          ).exclude(author__friends = request.user
                                                    ).order_by("?")[:30]
 
@@ -35,7 +37,7 @@ def get_feed(request):
                                        is_public = True,
                                        author__is_public = True,
                                        author__is_official = False,
-
+                                       views__times_count__lt = 5
                                        ).exclude(author__friends = request.user
                                                  ).order_by("?")[:20]
 
