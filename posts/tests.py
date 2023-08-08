@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from django.urls import reverse
 from rest_framework import status
 from .models import Post, PostImage
-from app1.models import User
+from usersapp.models import User
 from PIL import Image
 import tempfile
 

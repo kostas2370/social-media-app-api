@@ -18,7 +18,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         def conds(password: str) -> bool:
-
             passwordCheck = [lambda s: any(x.isupper() for x in s),
                              lambda s: any(x.islower() for x in s),
                              lambda s: any(x.isdigit() for x in s),

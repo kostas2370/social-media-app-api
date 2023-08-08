@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import app1.tasks as tasks
+import usersapp.tasks as tasks
 from rest_framework_simplejwt.tokens import RefreshToken
 
 

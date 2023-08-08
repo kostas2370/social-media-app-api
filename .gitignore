@@ -1,6 +1,6 @@
 /media/
 /venv/
-/app1/migrations/
+/usersapp/migrations/
 /db.sqlite3
 /posts/migrations/
 /messagesapp/migrations/

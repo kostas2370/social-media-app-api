@@ -1,5 +1,5 @@
 """
-ASGI config for project1 project.
+ASGI config for SocialMediaApi project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -12,9 +12,9 @@ import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from users.routing import ws_urlpatterns
+from usersapp.routing import ws_urlpatterns
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project1.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'SocialMediaApi.settings')
 
 application = ProtocolTypeRouter(
     {

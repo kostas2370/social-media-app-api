@@ -1,5 +1,5 @@
 from django.db import models
-from app1.models import User
+from usersapp.models import User
 
 
 class Message(models.Model):

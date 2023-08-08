@@ -1,15 +1,15 @@
 from django.db import models
-from app1 import tasks
-from app1.models import User
+from usersapp import tasks
+from usersapp.models import User
 from taggit.managers import TaggableManager
-from app1.utils import get_ip
+from usersapp.utils import get_ip
 
 
 class Post(models.Model):
 
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "posts")
-    title = models.CharField(max_length = 100, blank = True, null = True)
+    title = models.CharField(max_length = 110, blank = True, null = True)
     text = models.TextField(blank = True)
     upload_date = models.DateField(auto_now = True)
     is_public = models.BooleanField(default = False)

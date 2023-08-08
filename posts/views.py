@@ -2,10 +2,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Post, PostImage
 from .serializers import PostSerializer, CommentsSerializer
-from app1.utils import get_ip
+from usersapp.utils import get_ip
 from datetime import timedelta, date
 from itertools import chain
-from app1.models import User
+from usersapp.models import User
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
