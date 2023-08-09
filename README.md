@@ -176,32 +176,56 @@ Netmindz is an exciting and ambitious project that is currently in the active de
 
 **Login Endpoints**
 
-   >api/token/  : End point for login
+   >api/token/  : POST
    >
-   >api/token/refresh/ : For refreshing the token
+   >api/token/refresh/ POST
    >
-   >api/register/  : for registration
+   >api/register/  : POST
    >
-   >api/email-verify/ : for email verification
+   >api/email-verify/ GET
    >
 >
 
 **User Endpoints**
-   >api/sendrequest/<int:touserid>  send friend request
+   >api/sendrequest/<int:touserid>  POST
    >
-   >api/acceptrequest/  accept friend request
+   >api/acceptrequest/  PUT
    >
-   >api/getrequest/  get friend requests
+   >api/getrequest/  GET
    >
-   >api/deletefriend/<int:friendid> delete friend requests
+   >api/deletefriend/<int:friendid> DELETE
    >
-   >api/getfriend/  getfriendlsit
+   >api/getfriend/  GET
    >
-   >api/getfriend/<int:otherid> get the friends of other
+   >api/getfriend/<int:otherid> GET
    >
-   >api/user/<int:user_id>  get the info of the user
+   >api/user/<int:user_id>  GET
    >
-   > api/user/   get my info
+   > api/user/  GET
+>
+
+**Post Endpoints**
+>api/feed     GET
+>
+>api/post/new   POST
+>
+>api/post/    GET
+>
+>api/post/<int:post_id>/delete     DELETE
+>
+>api/post/<int:post_id>/update    PUT
+>
+>api/post/<int:post_id>/<int:image_id> DELETE
+>
+>api/post/<int:post_id>/like    POST
+>
+>api/post/<int:post_id>/dislike    POST    
+>
+>api/post/<int:post_id>/comment    POST
+>
+
+
+
     
     
     
