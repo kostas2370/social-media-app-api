@@ -30,6 +30,6 @@ Netmindz is an exciting and ambitious project that is currently in the active de
     is_active = models.BooleanField(default = True)
     is_online = models.BooleanField(default = False)
 
-    REQUIRED_FIELDS = ["email", "date_of_birth"] #Username and Password
+    REQUIRED_FIELDS = ["email", "date_of_birth"] Username and Password
 
 ```
