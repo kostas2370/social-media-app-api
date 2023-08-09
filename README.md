@@ -187,21 +187,21 @@ Netmindz is an exciting and ambitious project that is currently in the active de
 >
 
 **User Endpoints**
-   >api/sendrequest/int:touserid
+   >api/sendrequest/<int:touserid>  send friend request
    >
-   >api/acceptrequest/
+   >api/acceptrequest/  accept friend request
    >
-   >api/getrequest/
+   >api/getrequest/  get friend requests
    >
-   >api/deletefriend/<int:friendid>
+   >api/deletefriend/<int:friendid> delete friend requests
    >
-   >api/getfriend/
+   >api/getfriend/  getfriendlsit
    >
-   >api/getfriend/<int:otherid>
+   >api/getfriend/<int:otherid> get the friends of other
    >
-   >api/user/<int:user_id>
+   >api/user/<int:user_id>  get the info of the user
    >
-   > api/user/
+   > api/user/   get my info
     
     
     
