@@ -204,11 +204,7 @@ Netmindz is an exciting and ambitious project that is currently in the active de
     
      
     
-    
-   
 
-
-**User Endpoints**
 
 
 
