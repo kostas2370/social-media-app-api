@@ -61,3 +61,5 @@ class LoginUserList(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "logins")
     ip = models.CharField(max_length = 15)
     login_count = models.IntegerField(default = 1)
+
+

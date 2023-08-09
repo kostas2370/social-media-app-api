@@ -100,7 +100,6 @@ def delete_friend(request, friendid) -> JsonResponse:
     return JsonResponse({"Message": "Friend deleted successfully"}, status = status.HTTP_204_NO_CONTENT)
 
 
-# TODO GET USER INFORMATION
 @api_view(["GET"])
 def get_user(request, user_id=None):
     if user_id is None:

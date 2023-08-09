@@ -2,7 +2,6 @@ from .models import Post, PostImage, Comment, Likes, Dislikes
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField
 from usersapp.serializers import PostUserSerializer
-from django.core.files.base import ContentFile
 
 
 class PostImageSerializer(serializers.ModelSerializer):

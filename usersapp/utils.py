@@ -2,6 +2,7 @@ import json
 from urllib import parse
 import os
 
+
 def get_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -12,8 +13,8 @@ def get_ip(request):
 
 
 def check_if_university_domain(email: str):
-    #For testing porpuses
 
+    #For testing porpuses
     if parse.splituser(email)[1] in ["cs.ihu.gr", "gmail.com"]:
         return True
 

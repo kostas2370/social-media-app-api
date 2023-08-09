@@ -12,5 +12,6 @@ urlpatterns = [
     path('getfriend/<int:otherid>', get_friend_of_other, name = "get_friend_of_other"),
     path('user/<int:user_id>', get_user, name = "get_user"),
     path('user/', get_user, name = "get_my_info")
-
 ]
+
+

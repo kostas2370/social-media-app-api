@@ -9,10 +9,15 @@ from usersapp.models import User
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from django.http import QueryDict
 
 
 @api_view(["GET"])
 def get_feed(request):
+
+    if not request.user.is_verified:
+        return Response({"Message": "You have to be verified to see posts"}, status = status.HTTP_401_UNAUTHORIZED)
+
     datet = date.today() - timedelta(days = 30)
     ipa = get_ip(request)
     # TODO have to improve the filtering
@@ -72,6 +77,8 @@ def get_post(request):
 
 @api_view(["POST"])
 def add_post(request):
+    if type(request.data) is QueryDict:
+        request.data._mutable=True
 
     request.data["author"] = request.user.id
     images = request.FILES.getlist('upload_image')
@@ -94,6 +101,7 @@ def delete_post(request, post_id):
 
 @api_view(["PUT"])
 def update_post(request, post_id):
+
     post = get_object_or_404(Post, id= post_id)
     if post.author != request.user:
         return Response({"Message": "UNAUTHORIZED"}, status = status.HTTP_401_UNAUTHORIZED)
@@ -139,6 +147,6 @@ def add_post_comment(request, post_id):
     serializer = CommentsSerializer(data = request.data)
     serializer.is_valid(raise_exception = True)
     serializer.save()
-
     return Response({"Message": "Comment created successfully"}, status = status.HTTP_201_CREATED)
+
 
