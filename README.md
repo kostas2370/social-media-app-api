@@ -184,10 +184,14 @@ Netmindz is an exciting and ambitious project that is currently in the active de
    >
    >api/email-verify/ : for email verification
    >
+>
 
 **User Endpoints**
+    api/sendrequest/int:touserid
     
-    api/sendrequest/<int:touserid>
+    
+    
+    
     api/acceptrequest/
     api/getrequest/
     api/deletefriend/<int:friendid>
