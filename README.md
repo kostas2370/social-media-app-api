@@ -6,17 +6,15 @@ Netmindz is an exciting and ambitious project that is currently in the active de
 # Endpoints :
 
 **For register Login**
-```
-   api/token/  : End point for login
-   api/token/refresh/ : For refreshing the token
-   api/register/  : for registration
-   api/email-verify/ : for email verification
 
-```
+   >api/token/  : End point for login
+   >api/token/refresh/ : For refreshing the token
+   >api/register/  : for registration
+   >api/email-verify/ : for email verification
 
 **User Model**
 
-```python3
+```python
 
 
     sex_choices =(('M', 'MALE'), ('F', 'FEMALE'), ('O', 'OTHER'))
