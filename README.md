@@ -38,7 +38,7 @@ Netmindz is an exciting and ambitious project that is currently in the active de
     REQUIRED_FIELDS = ["email", "date_of_birth"] Username and Password
 
 ```
-**Friend Request Model
+**Friend Request Model**
 ```python
     id = models.AutoField(primary_key=True)
     from_user = models.ForeignKey(User, related_name = 'from_user', on_delete = models.CASCADE)
@@ -46,6 +46,9 @@ Netmindz is an exciting and ambitious project that is currently in the active de
     accepted = models.BooleanField(default = False)
 
 ```
+
+# Posts :
+
 **Posts Model**
 
 ```python
@@ -98,7 +101,6 @@ Netmindz is an exciting and ambitious project that is currently in the active de
 
 ```
 
-
 **Post View Model**
 
 ```python
@@ -107,5 +109,64 @@ Netmindz is an exciting and ambitious project that is currently in the active de
     user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "viewer")
     ip = models.CharField(max_length = 15)
     times_count = models.IntegerField(default = 1)
+
+```
+
+# University :
+
+**Universities Model**
+```python
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(unique = True, max_length = 60)
+    admin = models.ForeignKey(User, on_delete = models.SET_NULL, null = True)
+    email_domain = models.CharField(max_length = 50)
+    university_profile = models.ImageField(default = "default.jpg", upload_to = "universities_pic")
+    is_active = models.BooleanField(default = False)
+
+```
+
+**UniversityFollowers**
+
+```python
+
+    university = models.ForeignKey(Universities, on_delete = models.CASCADE)
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+
+```
+
+**UniversityReviews Model :**
+
+```python
+
+    id = models.AutoField(primary_key= True)
+    university = models.ForeignKey(Universities, on_delete = models.CASCADE)
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    rating = models.IntegerField(default = 1, validators = [MaxValueValidator(5), MinValueValidator(1)], blank = True)
+    review = models.TextField(max_length = 500)
+    reply = models.CharField(max_length = 500)
+
+```
+
+**UniversityPosts Model :**
+
+```python
+
+    id = models.AutoField(primary_key=True)
+    university = models.ForeignKey(Universities, on_delete = models.CASCADE, related_name = "universities_posts")
+    author = models.ForeignKey(User, on_delete = models.CASCADE)
+    title = models.CharField(max_length = 110, blank = True, null = True)
+    text = models.TextField(blank = True)
+    upload_date = models.DateField(auto_now = True)
+
+```
+
+**UniversityPostImages Model :**
+
+```python
+
+    post = models.ForeignKey(Universities, on_delete = models.CASCADE, related_name = "university_post_images")
+    image = models.ImageField(upload_to = "university_post_images", blank = True, null = True)
+
 
 ```
