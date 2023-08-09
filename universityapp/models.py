@@ -53,7 +53,7 @@ class UniversityPosts(models.Model):
 
 class UniversityPostImages(models.Model):
 
-    post = models.ForeignKey(Universities, on_delete = models.CASCADE, related_name = "post_images")
+    post = models.ForeignKey(Universities, on_delete = models.CASCADE, related_name = "university_post_images")
     image = models.ImageField(upload_to = "university_post_images", blank = True, null = True)
 
     def save(self, *args, **kwargs):
