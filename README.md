@@ -44,10 +44,12 @@ Netmindz is an exciting and ambitious project that is currently in the active de
     from_user = models.ForeignKey(User, related_name = 'from_user', on_delete = models.CASCADE)
     to_user = models.ForeignKey(User, related_name = 'to_user', on_delete = models.CASCADE)
     accepted = models.BooleanField(default = False)
+
 ```
 **Posts Model**
 
 ```python
+
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "posts")
     title = models.CharField(max_length = 110, blank = True, null = True)
@@ -60,6 +62,7 @@ Netmindz is an exciting and ambitious project that is currently in the active de
 **Post Images Model**
 
 ```python
+
    post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "post_images")
    image = models.ImageField(upload_to = "post_images", blank = True, null = True)
 ```
@@ -68,33 +71,41 @@ Netmindz is an exciting and ambitious project that is currently in the active de
 **Comments Model**
 
 ```python
+
     post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "comments")
     id = models.AutoField(primary_key = True)
     author = models.ForeignKey(User, on_delete = models.CASCADE)
     release_date = models.DateField(auto_now = True)
     text = models.CharField(max_length = 300, blank = False, null = False)
+
 ```
 
 
 **Likes Model**
 
 ```python
+
     post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "likes")
     user = models.ForeignKey(User, on_delete = models.CASCADE)
+
 ```
 **Dislikes Model**
 
 ```python
+
     post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "dislikes")
     user = models.ForeignKey(User, on_delete = models.CASCADE)
+
 ```
 
 
 **Post View Model**
 
 ```python
+
     post = models.ForeignKey(Post, on_delete = models.CASCADE, related_name = "views")
     user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "viewer")
     ip = models.CharField(max_length = 15)
     times_count = models.IntegerField(default = 1)
+
 ```
