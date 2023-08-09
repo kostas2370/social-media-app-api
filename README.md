@@ -3,19 +3,6 @@
 
 Netmindz is an exciting and ambitious project that is currently in the active development stage, poised to revolutionize the social media landscape within university communities. Leveraging the power of Django Rest Framework, WebSockets, and Celery, Netmindz's backend API is designed to create a seamless and engaging platform for university students and faculty. Through Django Rest Framework, the API provides a structured and efficient way to manage data, ensuring secure and consistent interactions. The integration of WebSockets introduces real-time communication, enabling instant updates on posts, comments, and notifications, fostering a vibrant and interactive virtual campus. Complementing this, Celery facilitates the background processing of tasks, ensuring optimal performance even during peak usage. As Netmindz continues its journey towards completion, its backend API, skillfully combining Django Rest Framework, WebSockets, and Celery, promises to redefine the university social media experience, fostering meaningful connections and enhancing collaboration among its users.
 
-# Endpoints :
-
-**Login Endpoints**
-
-   >api/token/  : End point for login
-   >
-   >api/token/refresh/ : For refreshing the token
-   >
-   >api/register/  : for registration
-   >
-   >api/email-verify/ : for email verification
-
-
 # Models :
 **User Model**
 
@@ -168,5 +155,50 @@ Netmindz is an exciting and ambitious project that is currently in the active de
     post = models.ForeignKey(Universities, on_delete = models.CASCADE, related_name = "university_post_images")
     image = models.ImageField(upload_to = "university_post_images", blank = True, null = True)
 
+```
+
+**Messages model**
+
+```python
+
+    id = models.AutoField(primary_key= True)
+    sender = models.ForeignKey(User, on_delete = models.CASCADE, blank = False, related_name= 'SenderToRec')
+    recipient = models.ForeignKey(User, on_delete = models.CASCADE, blank = False, related_name ='recToSencer')
+    message = models.CharField(max_length = 500, blank = False)
+    image = models.ImageField(upload_to = "message_pics", blank = True, null = True)
+    created = models.DateTimeField(auto_now_add = True)
+    isRead = models.BooleanField(default = False)
 
 ```
+
+
+# Endpoints :
+
+**Login Endpoints**
+
+   >api/token/  : End point for login
+   >
+   >api/token/refresh/ : For refreshing the token
+   >
+   >api/register/  : for registration
+   >
+   >api/email-verify/ : for email verification
+
+**User Endpoints**
+
+    >api/sendrequest/<int:touserid>
+    >
+    >api/acceptrequest/
+    >
+    >api/getrequest/
+    >
+    >api/deletefriend/<int:friendid>
+    >
+    >api/getfriend/
+    >
+    >api/getfriend/<int:otherid>
+    >
+    >api/user/<int:user_id>
+    >
+    >api/user/
+
