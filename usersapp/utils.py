@@ -1,7 +1,7 @@
 import json
 from urllib import parse
 import os
-from universityapp.models import Universities
+from universityapp.models import University
 
 
 def get_ip(request):
@@ -19,10 +19,10 @@ def check_if_university_domain(email: str):
     if domain in ["cs.ihu.gr", "gmail.com"]:
         return True
 
-    universities_check1 = Universities.objects.all()
+    universities_check1 = University.objects.all()
 
     for x in universities_check1 :
-        if x.email_domain == domain :
+        if x.email_domain == domain:
             return True
 
     with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'unies.json'), encoding="utf8") as universities:

@@ -1,4 +1,4 @@
-from .models import Post, PostImage, Comment, Likes, Dislikes
+from .models import Post, PostImage, Comment
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField
 from usersapp.serializers import PostUserSerializer

@@ -4,7 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from usersapp import tasks
 
 
-class Universities(models.Model):
+class University(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(unique = True, max_length = 60)
     admin = models.ForeignKey(User, on_delete = models.SET_NULL, null = True)
@@ -16,17 +16,17 @@ class Universities(models.Model):
         return f"{self.name} {self.id}"
 
 
-class UniversityFollowers(models.Model):
-    university = models.ForeignKey(Universities, on_delete = models.CASCADE)
+class UniversityFollower(models.Model):
+    university = models.ForeignKey(University, on_delete = models.CASCADE)
     user = models.ForeignKey(User, on_delete = models.CASCADE)
 
     def __str__(self):
         return f"{self.user.username} - {self.university.name}"
 
 
-class UniversityReviews(models.Model):
+class UniversityReview(models.Model):
     id = models.AutoField(primary_key= True)
-    university = models.ForeignKey(Universities, on_delete = models.CASCADE)
+    university = models.ForeignKey(University, on_delete = models.CASCADE)
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     rating = models.IntegerField(default = 1, validators = [MaxValueValidator(5), MinValueValidator(1)], blank = True)
     review = models.TextField(max_length = 500)
@@ -39,9 +39,9 @@ class UniversityReviews(models.Model):
         unique_together = ('university', 'user')
 
 
-class UniversityPosts(models.Model):
+class UniversityPost(models.Model):
     id = models.AutoField(primary_key=True)
-    university = models.ForeignKey(Universities, on_delete = models.CASCADE, related_name = "universities_posts")
+    university = models.ForeignKey(University, on_delete = models.CASCADE, related_name = "universities_posts")
     author = models.ForeignKey(User, on_delete = models.CASCADE)
     title = models.CharField(max_length = 110, blank = True, null = True)
     text = models.TextField(blank = True)
@@ -51,9 +51,9 @@ class UniversityPosts(models.Model):
         return f"{self.university} post {self.id}"
 
 
-class UniversityPostImages(models.Model):
+class UniversityPostImage(models.Model):
 
-    post = models.ForeignKey(Universities, on_delete = models.CASCADE, related_name = "university_post_images")
+    post = models.ForeignKey(UniversityPost, on_delete = models.CASCADE, related_name = "university_post_images")
     image = models.ImageField(upload_to = "university_post_images", blank = True, null = True)
 
     def save(self, *args, **kwargs):
