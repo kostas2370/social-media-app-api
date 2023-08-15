@@ -5,7 +5,7 @@ Netmindz is an exciting and ambitious project that is currently in the active de
 
 # DB SCHEMA
 
-![dsasd.png](..%2F..%2FDesktop%2Fdsasd.png)
+![dsasd](https://github.com/kostas2370/social-media-app-api/assets/96636678/9a25b62d-8aec-4ae7-883e-acb863e3f567)
 
 
 # Models :
