@@ -26,7 +26,7 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls.jwt')),
     path('api/token/', LoginView.as_view(), name="login"),
     path('api/token/refresh/', TokenRefreshView.as_view()),
-    path('api/register/', UserRegisterView.as_view(), name="register"),
+    path('api//', UserRegisterView.as_view(), name="register"),
     path('api/email-verify/', VerifyEmail.as_view(), name="email-verify"),
     path('api/', include("usersapp.urls")),
     path('api/', include("posts.urls")),

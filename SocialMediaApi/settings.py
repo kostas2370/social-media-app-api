@@ -181,7 +181,6 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
-#on_production
 """
 CHANNEL_LAYERS = {
     'default': {
@@ -189,11 +188,11 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             'hosts': [('127.0.0.1', 6379)]
         }
-
     }
 }
 """
 #While testing
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
