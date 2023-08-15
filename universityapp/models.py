@@ -2,6 +2,8 @@ from django.db import models
 from usersapp.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from usersapp import tasks
+from django.urls import reverse
+from django.template.defaultfilters import slugify
 
 
 class University(models.Model):
@@ -11,9 +13,18 @@ class University(models.Model):
     email_domain = models.CharField(max_length = 50)
     university_profile = models.ImageField(default = "default.jpg", upload_to = "universities_pic")
     is_active = models.BooleanField(default = False)
+    slug = models.SlugField(null = True)
 
     def __str__(self):
         return f"{self.name} {self.id}"
+
+    def get_absolute_url(self):
+        return reverse("university_profile", kwargs={"slug": self.slug})
+
+    def save(self, *args, **kwargs):  # new
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
 
 
 class UniversityFollower(models.Model):
@@ -31,6 +42,8 @@ class UniversityReview(models.Model):
     rating = models.IntegerField(default = 1, validators = [MaxValueValidator(5), MinValueValidator(1)], blank = True)
     review = models.TextField(max_length = 500)
     reply = models.CharField(max_length = 500)
+    upload_date = models.DateField(auto_now = True)
+    edit_date = models.DateField(auto_now = True)
 
     def __str__(self):
         return f"{self.university.name} {self.user.username}"

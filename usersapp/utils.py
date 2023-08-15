@@ -23,7 +23,7 @@ def check_if_university_domain(email: str):
 
     for x in universities_check1 :
         if x.email_domain == domain:
-            return True
+            return x.id
 
     with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'unies.json'), encoding="utf8") as universities:
         input_json = json.load(universities)

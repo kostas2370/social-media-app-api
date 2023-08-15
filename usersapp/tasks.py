@@ -11,6 +11,7 @@ channel_layer = get_channel_layer()
 def send_email(name, email, text):
     send_mail(subject = name, message = text, from_email = settings.EMAIL_HOST_USER, recipient_list = [email])
 
+
 @shared_task
 def resize_image(image: str, x: int, y: int):
     img = Image.open(image)

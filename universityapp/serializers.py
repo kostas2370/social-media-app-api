@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 
 class UniversityPostImageSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = UniversityPostImage
         fields = ["post", "id", "image"]
@@ -14,7 +15,7 @@ class UniversitySerializer(serializers.ModelSerializer):
     class Meta:
         model = University
         fields = ["id", "name", "admin", "email_domain", "university_profile", "is_active"]
-        extra_kwargs = {'id': {'read_only': True}, }
+        extra_kwargs = {'id': {'read_only': True}, "is_active" : {"read_only": True}}
 
 
 class UniversityFollowerSerializer(serializers.ModelSerializer):
