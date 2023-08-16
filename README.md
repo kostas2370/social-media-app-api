@@ -33,7 +33,7 @@ In summary, using Simple JWT Bearer authentication in your Django application of
 ![dsasd](https://github.com/kostas2370/social-media-app-api/assets/96636678/9a25b62d-8aec-4ae7-883e-acb863e3f567)
 
 
-
+```
 User
 ├─ id
 ├─ email
@@ -135,7 +135,7 @@ Message
 ├─ image
 ├─ created
 └─ isRead
-
+```
 # Models :
 **User Model**
 
