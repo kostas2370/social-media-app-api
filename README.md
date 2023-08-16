@@ -33,6 +33,109 @@ In summary, using Simple JWT Bearer authentication in your Django application of
 ![dsasd](https://github.com/kostas2370/social-media-app-api/assets/96636678/9a25b62d-8aec-4ae7-883e-acb863e3f567)
 
 
+
+User
+├─ id
+├─ email
+├─ date_of_birth
+├─ profile_image
+├─ sex
+├─ friends (ManyToMany with User)
+├─ is_public
+├─ is_official
+├─ is_verified
+├─ is_staff
+├─ is_active
+├─ is_online
+├─ REQUIRED_FIELDS
+
+FriendRequest
+├─ id
+├─ from_user (ForeignKey: User)
+├─ to_user (ForeignKey: User)
+└─ accepted
+
+Post
+├─ id
+├─ author (ForeignKey: User)
+├─ title
+├─ text
+├─ upload_date
+├─ is_public
+└─ tags (TaggableManager)
+
+PostImage
+├─ id
+├─ post (ForeignKey: Post)
+└─ image
+
+Comment
+├─ id
+├─ post (ForeignKey: Post)
+├─ author (ForeignKey: User)
+├─ release_date
+└─ text
+
+Like
+├─ id
+├─ post (ForeignKey: Post)
+└─ user (ForeignKey: User)
+
+Dislike
+├─ id
+├─ post (ForeignKey: Post)
+└─ user (ForeignKey: User)
+
+PostView
+├─ id
+├─ post (ForeignKey: Post)
+├─ user (ForeignKey: User)
+├─ ip
+└─ times_count
+
+University
+├─ id
+├─ name
+├─ admin (ForeignKey: User)
+├─ email_domain
+├─ university_profile
+└─ is_active
+
+UniversityFollower
+├─ id
+├─ university (ForeignKey: University)
+└─ user (ForeignKey: User)
+
+UniversityReview
+├─ id
+├─ university (ForeignKey: University)
+├─ user (ForeignKey: User)
+├─ rating
+├─ review
+└─ reply
+
+UniversityPost
+├─ id
+├─ university (ForeignKey: University)
+├─ author (ForeignKey: User)
+├─ title
+├─ text
+└─ upload_date
+
+UniversityPostImage
+├─ id
+├─ post (ForeignKey: UniversityPost)
+└─ image
+
+Message
+├─ id
+├─ sender (ForeignKey: User)
+├─ recipient (ForeignKey: User)
+├─ message
+├─ image
+├─ created
+└─ isRead
+
 # Models :
 **User Model**
 
