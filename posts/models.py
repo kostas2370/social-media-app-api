@@ -2,7 +2,6 @@ from django.db import models
 from usersapp import tasks
 from usersapp.models import User
 from taggit.managers import TaggableManager
-from usersapp.utils import get_ip
 
 
 class Post(models.Model):

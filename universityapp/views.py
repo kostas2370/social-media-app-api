@@ -1,10 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import UniversitySerializer, UniversityReviewSerializer
+from .serializers import UniversitySerializer, UniversityReviewSerializer, UniversityFollowerSerializer
 from django.http.response import JsonResponse
 from rest_framework import status
 from usersapp import utils
 from . models import *
+from django.shortcuts import get_object_or_404
+
 
 # Create your views here.
 
@@ -64,4 +66,20 @@ def add_university_review(request):
     return Response(serializer.data)
 
 
+@api_view(["POST"])
+def add_follower(request, university):
+    if not request.user.is_verified:
+        return JsonResponse("Your account must be verified, to follow universities",
+                            status = status.HTTP_401_UNAUTHORIZED)
 
+    uni = get_object_or_404(University, id = university)
+    uni_follow = UniversityFollower.objects.filter(university = uni, user = request.user)
+    if len(uni_follow) == 0:
+        obj = UniversityFollower.objects.create(university = uni, user = request)
+        obj.save()
+        return Response(UniversityFollowerSerializer(obj).data)
+    else:
+        uni_follow[0].delete()
+
+    return JsonResponse("The follow deleted successfully",
+                        status = status.HTTP_204_NO_CONTENT, safe = False)
