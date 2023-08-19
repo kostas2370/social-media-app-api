@@ -2,6 +2,7 @@ FROM python:3.9.5
 
 ENV PYTHONBUFFERED 1
 
+
 WORKDIR /app
 
 COPY requirements.txt .

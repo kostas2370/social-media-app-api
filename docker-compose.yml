@@ -9,4 +9,25 @@ services:
     volumes:
       - .:/app
 
+  redis:
+    image: "redis:alpine"
+
+  celery:
+    build: .
+    command: celery -A SocialMediaApi  worker -l info --pool=solo
+
+    volumes:
+      - .:/app
+    depends_on:
+      - socialmediaapi
+      - redis
+
+  celery-beat:
+    build: .
+    command: celery -A SocialMediaApp beat -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - socialmediaapi
+      - redis
 

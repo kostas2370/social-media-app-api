@@ -1,15 +1,16 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import UniversitySerializer, UniversityReviewSerializer, UniversityFollowerSerializer
+from .serializers import UniversitySerializer, UniversityReviewSerializer, UniversityFollowerSerializer, \
+    UniversityPostSerializer
 from django.http.response import JsonResponse
 from rest_framework import status
 from usersapp import utils
 from . models import *
 from django.shortcuts import get_object_or_404
+from django.http import QueryDict
 
 
 # Create your views here.
-
 
 @api_view(["POST"])
 def register_university(request):
@@ -83,3 +84,22 @@ def add_follower(request, university):
 
     return JsonResponse("The follow deleted successfully",
                         status = status.HTTP_204_NO_CONTENT, safe = False)
+
+
+@api_view(["POST"])
+def add_post(request):
+
+    if type(request.data) is QueryDict:
+        request.data._mutable = True
+
+    if not request.user.id == request.data["university"]:
+        return JsonResponse("Your account must be verified, to follow universities",
+                            status = status.HTTP_401_UNAUTHORIZED)
+
+    request.data["author"] = request.user.id
+    images = request.FILES.getlist('upload_image')
+    serializer = UniversityPostSerializer(data = request.data, context={'upload_image': images})
+    serializer.is_valid(raise_exception = True)
+    serializer.save()
+    return Response(data = serializer.data, status = status.HTTP_201_CREATED)
+
