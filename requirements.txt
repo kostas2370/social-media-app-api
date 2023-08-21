@@ -12,3 +12,4 @@ djoser
 django-taggit
 channels-redis
 celery[redis]
+python-dotenv~=1.0.0

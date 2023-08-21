@@ -3,7 +3,7 @@ version: '3.9'
 services:
   socialmediaapi:
     build: .
-    command: python SocialMediaApi/manage.py runserver 0.0.0.0:8000
+    command: /startdjango
     ports:
       - "8000:8000"
     volumes:
@@ -14,7 +14,7 @@ services:
 
   celery:
     build: .
-    command: celery -A SocialMediaApi  worker -l info --pool=solo
+    command: /startceleryworker
 
     volumes:
       - .:/app
@@ -24,7 +24,7 @@ services:
 
   celery-beat:
     build: .
-    command: celery -A SocialMediaApp beat -l info
+    command: /startcelerybeat
     volumes:
       - .:/app
     depends_on:
