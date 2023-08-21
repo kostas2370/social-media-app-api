@@ -146,7 +146,7 @@ Message
    >
    >api/token/refresh/ POST
    >
-   >api/register/  : POST
+   >api/register/  : POST 
    >
    >api/email-verify/ GET
    >
@@ -179,7 +179,7 @@ Message
 >
 >api/post/<int:post_id>/delete     DELETE
 >
->api/post/<int:post_id>/update    PUT
+>api/post/<int:post_id>/update    PUT (if you want to add images , add it in your form as upload_Image)
 >
 >api/post/<int:post_id>/<int:image_id> DELETE
 >
@@ -202,10 +202,24 @@ Message
    > api/university/register/  POST
    > 
    > api/university/review/ POST
+   > 
+   > api/university/<university:id>/follow/ POST
     
     
     
-     
+# TO DO :
+
+1. I have to create the messages app, with Websockets.
+2. Better filtering in get_feed
+3. Test Cases for university
+4. Improve mail format
+5. User settings
+6. Check for security issues
+7. Add comment section in University Posts
+8. Better Api Documentation
+9. Filtering in bad words (racism etc)
+
+
     
 
 

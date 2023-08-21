@@ -25,7 +25,7 @@ class UniversityFollowerSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         self.fields["user"] = PostUserSerializer()
-        return super(UniversityFollower, self).to_representation(instance)
+        return super(UniversityFollowerSerializer, self).to_representation(instance)
 
 
 class UniversityReviewSerializer(serializers.ModelSerializer):
@@ -42,7 +42,6 @@ class UniversityReviewSerializer(serializers.ModelSerializer):
 class UniversityPostSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only = True)
     title = serializers.CharField(required = False)
-    author = PostUserSerializer(read_only = True)
     university_post_images = UniversityPostImageSerializer(many = True, read_only = True)
 
     class Meta:

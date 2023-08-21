@@ -38,7 +38,7 @@ class UniversityFollower(models.Model):
 class UniversityReview(models.Model):
     id = models.AutoField(primary_key= True)
     university = models.ForeignKey(University, on_delete = models.CASCADE)
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    user = models.ForeignKey(User, on_delete = models.CASCADE, blank = True)
     rating = models.IntegerField(default = 1, validators = [MaxValueValidator(5), MinValueValidator(1)], blank = True)
     review = models.TextField(max_length = 500)
     reply = models.CharField(max_length = 500)

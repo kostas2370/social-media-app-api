@@ -76,7 +76,7 @@ def add_follower(request, university):
     uni = get_object_or_404(University, id = university)
     uni_follow = UniversityFollower.objects.filter(university = uni, user = request.user)
     if len(uni_follow) == 0:
-        obj = UniversityFollower.objects.create(university = uni, user = request)
+        obj = UniversityFollower.objects.create(university = uni, user = request.user)
         obj.save()
         return Response(UniversityFollowerSerializer(obj).data)
     else:
@@ -92,9 +92,10 @@ def add_post(request):
     if type(request.data) is QueryDict:
         request.data._mutable = True
 
-    if not request.user.id == request.data["university"]:
-        return JsonResponse("Your account must be verified, to follow universities",
-                            status = status.HTTP_401_UNAUTHORIZED)
+    university = University.objects.get(id = request.data["university"])
+    if not request.user.id == university.admin.id:
+        return JsonResponse("You must be the admin to add university post",
+                            status = status.HTTP_401_UNAUTHORIZED, safe = False)
 
     request.data["author"] = request.user.id
     images = request.FILES.getlist('upload_image')
