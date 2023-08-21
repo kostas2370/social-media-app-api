@@ -8,6 +8,8 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+    depends_on:
+      - redis
 
   redis:
     image: "redis:alpine"

@@ -24,16 +24,13 @@ RUN pip install -r requirements.txt
 
 
 COPY startdjango.sh /startdjango
+COPY startceleryworker.sh /startceleryworker
+COPY startcelerybeat.sh /startcelerybeat
+
 RUN sed -i 's/\r$//g' /startdjango
 RUN chmod +x /startdjango
-
-
-COPY startceleryworker.sh /startceleryworker
 RUN sed -i 's/\r$//g' /startceleryworker
 RUN chmod +x /startceleryworker
-
-
-COPY startcelerybeat.sh /startcelerybeat
 RUN sed -i 's/\r$//g' /startcelerybeat
 RUN chmod +x /startcelerybeat
 
