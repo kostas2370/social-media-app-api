@@ -4,7 +4,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from datetime import datetime
 from dateutil import relativedelta
-from .utils import check_if_university_domain
+from .utils import check_if_university_domain, conds
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -17,13 +17,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}, }
 
     def validate(self, attrs):
-        def conds(password: str) -> bool:
-            passwordCheck = [lambda s: any(x.isupper() for x in s),
-                             lambda s: any(x.islower() for x in s),
-                             lambda s: any(x.isdigit() for x in s),
-                             lambda s: len(s) >= 8, ]
 
-            return all(condition(password) for condition in passwordCheck)
 
         email = attrs.get("email")
 
@@ -89,3 +83,15 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         fields = ("id", "from_user", "accepted")
 
 
+class ChangePasswordSerializer(serializers.Serializer):
+
+    old_password = serializers.CharField(required = True)
+    new_password = serializers.CharField(required = True)
+
+    def validate(self, attrs):
+        password = attrs.get("new_password")
+
+        if not conds(password):
+            raise AuthenticationFailed("Your password must contain at least 8 chars ,uppercase ,lowercase ,digit")
+
+        return super.validate(attrs)

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'messagesapp',
     'universityapp',
     'taggit',
+    'django_rest_passwordreset'
 
 ]
 

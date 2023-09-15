@@ -6,7 +6,8 @@ from rest_framework import status
 from .models import FriendRequest, User
 from .serializers import FriendRequestSerializer, UserSerializer
 from django.shortcuts import get_object_or_404
-from .serializers import PostUserSerializer
+from .serializers import PostUserSerializer, ChangePasswordSerializer
+from django.contrib.auth import update_session_auth_hash
 
 
 @api_view(["GET"])
@@ -112,4 +113,20 @@ def get_user(request, user_id=None):
 
     else:
         return Response(UserSerializer(user).data)
+
+
+@api_view(["POST"])
+def change_password(request):
+
+    serializer = ChangePasswordSerializer(data = request.data)
+    serializer.is_valid(raise_exception = True)
+    user = request.user
+
+    if user.check_password(serializer.data.get("old_password")):
+        user.set_password(serializer.data.set("new_password"))
+        user.save()
+        update_session_auth_hash(request, user)
+        return Response({'message': 'Password changed successfully.'}, status = status.HTTP_200_OK)
+
+    return Response({'error': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
 
