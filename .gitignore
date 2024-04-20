@@ -1,4 +1,4 @@
-/media/
+/media/profil_pics
 /venv/
 /usersapp/migrations/
 /db.sqlite3
@@ -6,3 +6,4 @@
 /messagesapp/migrations/
 *.pyc
 .env
+

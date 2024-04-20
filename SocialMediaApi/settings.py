@@ -50,10 +50,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_celery_beat',
     'djoser',
-    'usersapp',
-    'posts',
-    'messagesapp',
-    'universityapp',
+    'apps.usersapp',
+    'apps.posts',
+    'apps.messagesapp',
+    'apps.universityapp',
     'taggit',
     'django_rest_passwordreset'
 
@@ -70,7 +70,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-AUTH_USER_MODEL = 'usersapp.User'
+AUTH_USER_MODEL = 'userapp.User'
 
 
 ROOT_URLCONF = 'SocialMediaApi.urls'

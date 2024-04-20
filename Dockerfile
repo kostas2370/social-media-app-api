@@ -23,9 +23,9 @@ RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 
-COPY startdjango.sh /startdjango
-COPY startceleryworker.sh /startceleryworker
-COPY startcelerybeat.sh /startcelerybeat
+COPY docker/startdjango.sh /startdjango
+COPY docker/startceleryworker.sh /startceleryworker
+COPY docker/startcelerybeat.sh /startcelerybeat
 
 RUN sed -i 's/\r$//g' /startdjango
 RUN chmod +x /startdjango
