@@ -13,6 +13,7 @@ class PostImageSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(default = serializers.CurrentUserDefault())
 
     class Meta:
         model = Comment
@@ -34,6 +35,7 @@ class PostSerializer(serializers.ModelSerializer):
     dislikes = serializers.IntegerField(source = "dislikes.count", read_only = True)
     views = serializers.IntegerField(source = "views.count", read_only = True)
     is_public = serializers.BooleanField()
+    author = serializers.HiddenField(default = serializers.CurrentUserDefault())
 
     class Meta:
         model = Post

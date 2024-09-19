@@ -12,6 +12,8 @@ class UniversityPostImageSerializer(serializers.ModelSerializer):
 
 
 class UniversitySerializer(serializers.ModelSerializer):
+    admin = serializers.HiddenField(default = serializers.CurrentUserDefault())
+
     class Meta:
         model = University
         fields = ["id", "name", "admin", "email_domain", "university_profile", "is_active"]
@@ -29,6 +31,7 @@ class UniversityFollowerSerializer(serializers.ModelSerializer):
 
 
 class UniversityReviewSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default = serializers.CurrentUserDefault())
     class Meta:
         model = UniversityReview
         fields = "__all__"
@@ -43,6 +46,7 @@ class UniversityPostSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only = True)
     title = serializers.CharField(required = False)
     university_post_images = UniversityPostImageSerializer(many = True, read_only = True)
+    author = serializers.HiddenField(default = serializers.CurrentUserDefault())
 
     class Meta:
         model = UniversityPost

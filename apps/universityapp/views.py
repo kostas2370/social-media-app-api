@@ -1,106 +1,85 @@
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import UniversitySerializer, UniversityReviewSerializer, UniversityFollowerSerializer, \
     UniversityPostSerializer
 from django.http.response import JsonResponse
 from rest_framework import status
-from apps.usersapp import utils
 from . models import *
-from django.shortcuts import get_object_or_404
-from django.http import QueryDict
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
+from rest_framework.decorators import action
+from .permissions import UniversityPermissions, ReviewPermission
 
 
-# Create your views here.
+class UniversityViewSet(ModelViewSet):
+    serializer_class = [UniversitySerializer]
+    permission_classes = [IsAuthenticated, UniversityPermissions, ReviewPermission]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    search_fields = ['name']
+    pagination_class = [PageNumberPagination]
 
-@api_view(["POST"])
-def register_university(request):
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return University.objects.all()
 
-    if not request.user.is_verified:
-        return JsonResponse("Your account must be verified, to apply for university",
-                            status = status.HTTP_401_UNAUTHORIZED, safe = False)
+        return University.objects.filter(Q(admin = self.request.user) | Q(is_active = True))
 
-    request.data["admin"] = request.user.id
-    serializer = UniversitySerializer(data = request.data)
-    serializer.is_valid(raise_exception = True)
-    serializer.save()
-    return Response(serializer.data)
+    def get_serializer_class(self):
+        if self.action == "review":
+            return UniversityReviewSerializer
 
+        if self.action == "post":
+            return UniversityPostSerializer
 
-@api_view(["GET"])
-def get_university(request, slug=None, id=None):
-    if not request.user.is_verified:
-        return JsonResponse("Your account must be verified, to check for universities",
-                            status = status.HTTP_401_UNAUTHORIZED, safe = False)
+        return UniversitySerializer
 
-    if id is not None:
-        university = University.objects.filter(id = id)
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        upload_image = self.request.FILES.getlist('upload_image')
+        if upload_image:
+            context["upload_image"] = upload_image
 
-    elif slug is not None:
-        university = University.objects.filter(slug = slug)
+        return context
 
-    else:
-        university = University.objects.all()[:10]
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception = True)
+        serializer.save()
+        return Response(serializer.data)
 
-    serializer = UniversitySerializer(university, many = True)
-    return Response(serializer.data)
+    @action(detail = True, methods = ["POST"])
+    def review(self, request, pk):
 
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception = True)
+        serializer.save()
 
-@api_view(["POST"])
-def add_university_review(request):
-    university = University.objects.get(id = request.data["university"])
+        return Response(serializer.data)
 
-    if not request.user.is_verified:
-        return JsonResponse("Your account must be verified, to check for universities",
-                            status = status.HTTP_401_UNAUTHORIZED)
+    @action(detail = True, methods = ["POST"])
+    def follow(self, request, pk):
+        uni = self.get_object()
+        uni_follow = UniversityFollower.objects.filter(university = uni, user = request.user)
+        if len(uni_follow) == 0:
+            obj = UniversityFollower.objects.create(university = uni, user = request.user)
+            obj.save()
+            return Response(UniversityFollowerSerializer(obj).data)
+        else:
+            uni_follow[0].delete()
 
-    if not utils.check_if_university_domain(request.user.email) == university.id:
+        return JsonResponse("The follow deleted successfully", status = status.HTTP_204_NO_CONTENT, safe = False)
 
-        return JsonResponse("You must have the same email domain with the university",
-                            status = status.HTTP_401_UNAUTHORIZED, safe = False)
-
-    request.data["user"] = request.user.id
-
-    serializer = UniversityReviewSerializer(data = request.data)
-    serializer.is_valid(raise_exception = True)
-    serializer.save()
-
-    return Response(serializer.data)
-
-
-@api_view(["POST"])
-def add_follower(request, university):
-    if not request.user.is_verified:
-        return JsonResponse("Your account must be verified, to follow universities",
-                            status = status.HTTP_401_UNAUTHORIZED)
-
-    uni = get_object_or_404(University, id = university)
-    uni_follow = UniversityFollower.objects.filter(university = uni, user = request.user)
-    if len(uni_follow) == 0:
-        obj = UniversityFollower.objects.create(university = uni, user = request.user)
-        obj.save()
-        return Response(UniversityFollowerSerializer(obj).data)
-    else:
-        uni_follow[0].delete()
-
-    return JsonResponse("The follow deleted successfully",
-                        status = status.HTTP_204_NO_CONTENT, safe = False)
+    @action(detail = True, methods = ["POST"])
+    def post(self, request, pk):
+        data = request.data
+        data["university"] = pk
+        serializer = self.get_serializer(data = data)
+        serializer.is_valid(raise_exception = True)
+        serializer.save()
+        return Response(data = serializer.data, status = status.HTTP_201_CREATED)
 
 
-@api_view(["POST"])
-def add_post(request):
-
-    if type(request.data) is QueryDict:
-        request.data._mutable = True
-
-    university = University.objects.get(id = request.data["university"])
-    if not request.user.id == university.admin.id:
-        return JsonResponse("You must be the admin to add university post",
-                            status = status.HTTP_401_UNAUTHORIZED, safe = False)
-
-    request.data["author"] = request.user.id
-    images = request.FILES.getlist('upload_image')
-    serializer = UniversityPostSerializer(data = request.data, context={'upload_image': images})
-    serializer.is_valid(raise_exception = True)
-    serializer.save()
-    return Response(data = serializer.data, status = status.HTTP_201_CREATED)
 

@@ -21,7 +21,7 @@ def check_if_university_domain(email: str):
 
     universities_check1 = University.objects.all()
 
-    for x in universities_check1 :
+    for x in universities_check1:
         if x.email_domain == domain:
             return x.id
 
